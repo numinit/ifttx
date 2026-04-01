@@ -1,0 +1,50 @@
+From 73d4e6a594eb7a3af81ddf5c98495532f5e627ab Mon Sep 17 00:00:00 2001
+From: Morgan Jones <me@numin.it>
+Date: Wed, 1 Apr 2026 01:06:35 -0700
+Subject: [PATCH] Add FLDIGI_CREATE_CONFIG_AND_EXIT
+
+---
+ src/main.cxx | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/src/main.cxx b/src/main.cxx
+index d9ea336..1f06efd 100644
+--- a/src/main.cxx
++++ b/src/main.cxx
+@@ -796,6 +796,10 @@ void delayed_startup(void *)
+ 		Fl::unlock();
+ 	}
+ 
++	if (getenv("FLDIGI_CREATE_CONFIG_AND_EXIT")) {
++		clean_exit(false);
++		exit(0);
++	}
+ }
+ 
+ std::string pname = "";
+@@ -1124,6 +1128,13 @@ int main (int argc, char *argv[])
+ 	LOG_INFO("FLMSG_ICS_tmp_dir: %s", FLMSG_ICS_tmp_dir.c_str());
+ 
+ 	bool have_config = progdefaults.readDefaultsXML();
++	bool should_clean_exit = false;
++	if (!have_config && getenv("FLDIGI_CREATE_CONFIG_AND_EXIT")) {
++		progdefaults.saveDefaults();
++		have_config = progdefaults.readDefaultsXML();
++		should_clean_exit = true;
++	}
++
+ 	check_overrides();
+ 
+ 	xmlfname = HomeDir;
+@@ -1229,7 +1240,7 @@ int main (int argc, char *argv[])
+ 		LOG_INFO("%s", "Created audio alert object");
+ #endif
+ 
+-	if (!have_config) {
++	if (!have_config && !should_clean_exit) {
+ 		show_wizard(argc, argv);
+ 		Fl_Window* w;
+ 		while ((w = Fl::first_window()) && w->visible())
+-- 
+2.50.1
+
