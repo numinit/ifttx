@@ -202,9 +202,11 @@ app.run_fldigi(options: options, cmd: fldigi) do |chunk|
     str.truncate(0)
     new_cmd = [*cmd, cmd.first, *$~.captures]
     Log.info "Got: #{$~[0]}"
-    Log.info "Executing #{Shellwords.join(new_cmd)}"
-    if !system(*new_cmd)
-      exit $?
+    Log.info "Executing: #{Shellwords.join(new_cmd)}"
+    Thread.fork do
+      if !system(*new_cmd)
+        Log.warn "#{Shellwords.join(new_cmd)} exited with status #$?"
+      end
     end
   end
 end
