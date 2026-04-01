@@ -15,8 +15,11 @@ and us adding our changes, so we start it a second time to actually perform the 
 `nix run` ought to do the trick.
 
 For example, to decode CW at frequency offset 1337, pass:
-`-o mode_name=CW -o wf_carrier=1337 -o CWSWEETSPOT=1337 \
+`-o mode_name=CW -o wf_carrier=1337 -o CWSWEETSPOT=1337
 -o PORTINDEVICE='(name of input device)'`
+
+Device names are the same as those listed in `pavucontrol`.
+Open `fldigi` if you're not sure.
 
 To match a Github PR, do something like: `-r 'PR ?(\\d{6})'`
 
